@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from task import Task
-from edf_scheduler import EDFScheduler
-from rms_scheduler import RMScheduler
+from src.task import Task
+from src.edf_scheduler import EDFScheduler
+from src.rms_scheduler import RMScheduler
 from collections import deque
 
 class SchedulerGUI:
