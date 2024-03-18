@@ -4,6 +4,8 @@ from src.task import Task
 from src.edf_scheduler import EDFScheduler
 from src.rms_scheduler import RMScheduler
 from collections import deque
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class SchedulerGUI:
     def __init__(self, master):
@@ -62,6 +64,9 @@ class SchedulerGUI:
         self.output_text.grid(row=1, column=0, padx=5, pady=5)
         self.output_text.configure(state="disabled")
         
+        self.gantt_frame = ttk.Frame(self.master)
+        self.gantt_frame.pack(padx=10, pady=10)
+        
     def add_task(self):
         name = self.task_name_entry.get()
         arrival_time = int(self.task_arrival_entry.get())
@@ -76,6 +81,7 @@ class SchedulerGUI:
     def on_algorithm_selected(self, event):
         algorithm = self.selected_algorithm.get()
         print(f"Algorithm selected: {algorithm}")
+        # You can perform any additional actions here if needed
         
     def schedule_tasks(self):
         algorithm = self.selected_algorithm.get()
@@ -85,5 +91,31 @@ class SchedulerGUI:
             scheduler = EDFScheduler()
         elif algorithm == "RMS":
             scheduler = RMScheduler()
-        scheduler.schedule(self.tasks)
+        scheduling_output = scheduler.schedule(self.tasks)
+        self.output_text.insert(tk.END, scheduling_output)
         self.output_text.configure(state="disabled")
+        
+        # Plot Gantt chart
+        self.plot_gantt_chart(scheduler)
+        
+    def plot_gantt_chart(self, scheduler):
+        fig, ax = plt.subplots()
+        tasks = self.tasks
+        for task in tasks:
+            ax.broken_barh([(task.arrival_time, task.deadline - task.arrival_time)], (1, 1), facecolors='blue')
+        ax.set_xlabel('Time')
+        ax.set_yticks([1])
+        ax.set_yticklabels(['Tasks'])
+        ax.grid(True)
+        
+        canvas = FigureCanvasTkAgg(fig, master=self.gantt_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+def main():
+    root = tk.Tk()
+    app = SchedulerGUI(root)
+    root.mainloop()
+
+if __name__ == "__main__":
+    main()
