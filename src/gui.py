@@ -1,9 +1,12 @@
-# gui.py
 import tkinter as tk
 from tkinter import ttk
 from src.task import Task
 from src.edf_scheduler import EDFScheduler
 from src.rms_scheduler import RMScheduler
+from src.fcfs_scheduler import FCFSScheduler
+from src.rr_scheduler import RRScheduler
+from src.sjf_scheduler import SJFScheduler
+from src.priority_scheduler import PriorityScheduler
 from collections import deque
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -29,24 +32,22 @@ class SchedulerGUI:
         self.task_name_label.grid(row=1, column=0, padx=5)
         self.task_arrival_label = ttk.Label(self.task_frame, text="Arrival Time")
         self.task_arrival_label.grid(row=1, column=1, padx=5)
-        self.task_deadline_label = ttk.Label(self.task_frame, text="Deadline")
-        self.task_deadline_label.grid(row=1, column=2, padx=5)
+        self.task_burst_label = ttk.Label(self.task_frame, text="Burst Time")
+        self.task_burst_label.grid(row=1, column=2, padx=5)
+        self.task_priority_label = ttk.Label(self.task_frame, text="Priority")
+        self.task_priority_label.grid(row=1, column=3, padx=5)
         
         self.task_name_entry = ttk.Entry(self.task_frame)
         self.task_name_entry.grid(row=2, column=0, padx=5, pady=5)
         self.task_arrival_entry = ttk.Entry(self.task_frame)
         self.task_arrival_entry.grid(row=2, column=1, padx=5, pady=5)
-        self.task_deadline_entry = ttk.Entry(self.task_frame)
-        self.task_deadline_entry.grid(row=2, column=2, padx=5, pady=5)
+        self.task_burst_entry = ttk.Entry(self.task_frame)
+        self.task_burst_entry.grid(row=2, column=2, padx=5, pady=5)
+        self.task_priority_entry = ttk.Entry(self.task_frame)
+        self.task_priority_entry.grid(row=2, column=3, padx=5, pady=5)
         
         self.add_button = ttk.Button(self.task_frame, text="Add Task", command=self.add_task)
-        self.add_button.grid(row=2, column=3, padx=5, pady=5)
-        
-        self.edit_button = ttk.Button(self.task_frame, text="Edit Task", command=self.edit_task)
-        self.edit_button.grid(row=2, column=4, padx=5, pady=5)
-        
-        self.remove_button = ttk.Button(self.task_frame, text="Remove Task", command=self.remove_task)
-        self.remove_button.grid(row=2, column=5, padx=5, pady=5)
+        self.add_button.grid(row=2, column=4, padx=5, pady=5)
         
         self.algorithm_frame = ttk.Frame(self.master)
         self.algorithm_frame.pack(padx=10, pady=10)
@@ -54,7 +55,7 @@ class SchedulerGUI:
         self.algorithm_label = ttk.Label(self.algorithm_frame, text="Select Algorithm:")
         self.algorithm_label.grid(row=0, column=0, sticky=tk.W)
         
-        self.algorithm_combo = ttk.Combobox(self.algorithm_frame, values=["EDF", "RMS"], textvariable=self.selected_algorithm)
+        self.algorithm_combo = ttk.Combobox(self.algorithm_frame, values=["EDF", "RMS", "FCFS", "RR", "SJF", "Priority"], textvariable=self.selected_algorithm)
         self.algorithm_combo.grid(row=0, column=1, padx=5, pady=5)
         self.algorithm_combo.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
         
@@ -77,30 +78,16 @@ class SchedulerGUI:
     def add_task(self):
         name = self.task_name_entry.get()
         arrival_time = int(self.task_arrival_entry.get())
-        deadline = int(self.task_deadline_entry.get())
-        task = Task(name, arrival_time, deadline)
+        burst_time = int(self.task_burst_entry.get())
+        priority = int(self.task_priority_entry.get())
+        task = Task(name, arrival_time, burst_time, priority)
         self.tasks.append(task)
         self.task_name_entry.delete(0, tk.END)
         self.task_arrival_entry.delete(0, tk.END)
-        self.task_deadline_entry.delete(0, tk.END)
+        self.task_burst_entry.delete(0, tk.END)
+        self.task_priority_entry.delete(0, tk.END)
         self.task_name_entry.focus_set()
         
-    def edit_task(self):
-        selected_index = self.task_listbox.curselection()
-        if selected_index:
-            task = self.tasks[selected_index[0]]
-            # Update entry fields with task details
-            self.task_name_entry.insert(0, task.name)
-            self.task_arrival_entry.insert(0, str(task.arrival_time))
-            self.task_deadline_entry.insert(0, str(task.deadline))
-            # Remove the edited task from the list
-            del self.tasks[selected_index[0]]
-    
-    def remove_task(self):
-        selected_index = self.task_listbox.curselection()
-        if selected_index:
-            del self.tasks[selected_index[0]]
-    
     def on_algorithm_selected(self, event):
         algorithm = self.selected_algorithm.get()
         print(f"Algorithm selected: {algorithm}")
@@ -114,6 +101,14 @@ class SchedulerGUI:
             scheduler = EDFScheduler()
         elif algorithm == "RMS":
             scheduler = RMScheduler()
+        elif algorithm == "FCFS":
+            scheduler = FCFSScheduler()
+        elif algorithm == "RR":
+            scheduler = RRScheduler()
+        elif algorithm == "SJF":
+            scheduler = SJFScheduler()
+        elif algorithm == "Priority":
+            scheduler = PriorityScheduler()
         scheduling_output = scheduler.schedule(self.tasks)
         self.output_text.insert(tk.END, scheduling_output)
         self.output_text.configure(state="disabled")
@@ -125,7 +120,7 @@ class SchedulerGUI:
         fig, ax = plt.subplots()
         tasks = self.tasks
         for task in tasks:
-            ax.broken_barh([(task.arrival_time, task.deadline - task.arrival_time)], (1, 1), facecolors='blue')
+            ax.broken_barh([(task.arrival_time, task.burst_time)], (1, 1), facecolors='blue')
         ax.set_xlabel('Time')
         ax.set_yticks([1])
         ax.set_yticklabels(['Tasks'])
