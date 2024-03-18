@@ -1,3 +1,4 @@
+# gui.py
 import tkinter as tk
 from tkinter import ttk
 from src.task import Task
@@ -41,6 +42,12 @@ class SchedulerGUI:
         self.add_button = ttk.Button(self.task_frame, text="Add Task", command=self.add_task)
         self.add_button.grid(row=2, column=3, padx=5, pady=5)
         
+        self.edit_button = ttk.Button(self.task_frame, text="Edit Task", command=self.edit_task)
+        self.edit_button.grid(row=2, column=4, padx=5, pady=5)
+        
+        self.remove_button = ttk.Button(self.task_frame, text="Remove Task", command=self.remove_task)
+        self.remove_button.grid(row=2, column=5, padx=5, pady=5)
+        
         self.algorithm_frame = ttk.Frame(self.master)
         self.algorithm_frame.pack(padx=10, pady=10)
         
@@ -78,6 +85,22 @@ class SchedulerGUI:
         self.task_deadline_entry.delete(0, tk.END)
         self.task_name_entry.focus_set()
         
+    def edit_task(self):
+        selected_index = self.task_listbox.curselection()
+        if selected_index:
+            task = self.tasks[selected_index[0]]
+            # Update entry fields with task details
+            self.task_name_entry.insert(0, task.name)
+            self.task_arrival_entry.insert(0, str(task.arrival_time))
+            self.task_deadline_entry.insert(0, str(task.deadline))
+            # Remove the edited task from the list
+            del self.tasks[selected_index[0]]
+    
+    def remove_task(self):
+        selected_index = self.task_listbox.curselection()
+        if selected_index:
+            del self.tasks[selected_index[0]]
+    
     def on_algorithm_selected(self, event):
         algorithm = self.selected_algorithm.get()
         print(f"Algorithm selected: {algorithm}")
