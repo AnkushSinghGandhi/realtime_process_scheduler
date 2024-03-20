@@ -27,7 +27,7 @@
   </a>
 </p>
 
-# Real-Time Process Scheduler Simulator
+# Real-Time Process Scheduler
 
 The Real-Time Task Scheduler GUI is a Python application that provides a graphical interface for managing and scheduling tasks using various real-time scheduling algorithms.
 
