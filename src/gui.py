@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import numpy as np
 from src.process import Process
 from src.edf_scheduler import EDFScheduler
 from src.rms_scheduler import RMScheduler
@@ -166,20 +167,37 @@ class SchedulerGUI:
         self.output_text.insert(tk.END, scheduling_output)
         self.output_text.configure(state="disabled")
 
-        
+        # After scheduling, plot the Gantt chart
+        self.plot_gantt_chart(scheduler)
+
     def plot_gantt_chart(self, scheduler):
         fig, ax = plt.subplots()
         processes = self.processes
-        for process in processes:
-            ax.broken_barh([(process.arrival_time, process.burst_time)], (1, 1), facecolors='blue')
+        cmap = plt.get_cmap('tab10')
+        colors = cmap(np.linspace(0, 1, len(processes)))
+        
+        for i, process in enumerate(processes):
+            start_time = process.arrival_time
+            end_time = process.arrival_time + process.burst_time
+            duration = process.burst_time
+            ax.barh(i, end_time - start_time, left=start_time, color=colors[i], label=f'Process {i + 1}')
+        
         ax.set_xlabel('Time')
-        ax.set_yticks([1])
-        ax.set_yticklabels(['Processes'])
+        ax.set_ylabel('Processes')
+        ax.set_title('Gantt Chart')
+        ax.set_yticks(np.arange(len(processes)))
+        ax.set_yticklabels([f'Process {i + 1}' for i in range(len(processes))])
+        ax.legend(loc='upper right')
         ax.grid(True)
+        
+        plt.tight_layout()
         
         canvas = FigureCanvasTkAgg(fig, master=self.gantt_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+
+
 
 def main():
     root = tk.Tk()
