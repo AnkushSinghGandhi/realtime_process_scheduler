@@ -1,4 +1,4 @@
-class Task:
+class Process:
     def __init__(self, name, arrival_time, burst_time, priority):
         self.name = name
         self.arrival_time = arrival_time
