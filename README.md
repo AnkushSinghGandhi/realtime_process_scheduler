@@ -31,6 +31,8 @@
 
 The Real-Time Task Scheduler GUI is a Python application that provides a graphical interface for managing and scheduling tasks using various real-time scheduling algorithms.
 
+<img src="repo_images/gui.png">
+
 ## UML Diagram
 <img src="repo_images/uml.svg">
 
