@@ -1,12 +1,33 @@
 class SJFScheduler:
     def __init__(self):
         self.current_time = 0
+        self.total_waiting_time = 0
+        self.total_turnaround_time = 0
 
-    def schedule(self, tasks):
-        print("SJF Scheduling:")
-        print("Time\tTask")
-        tasks.sort(key=lambda x: x.remaining_time)
-        for task in tasks:
-            print(f"{self.current_time}\t{task.name}")
-            self.current_time += task.remaining_time
-        print("Scheduling completed.")
+    def schedule(self, processes):
+        if not processes:
+            return "No processes to schedule"  # Return a message if there are no processes
+
+        # Sort processes based on burst time
+        processes.sort(key=lambda x: x.burst_time)
+        
+        scheduling_output = "Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n"
+        
+        for process in processes:
+            # Calculate waiting time
+            waiting_time = max(0, self.current_time - process.arrival_time)
+            self.total_waiting_time += waiting_time
+            # Calculate turnaround time
+            turnaround_time = waiting_time + process.burst_time
+            self.total_turnaround_time += turnaround_time
+            scheduling_output += f"{process.name}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{waiting_time}\t\t{turnaround_time}\n"
+            # Update current time
+            self.current_time += process.burst_time
+        
+        avg_waiting_time = self.total_waiting_time / len(processes)
+        avg_turnaround_time = self.total_turnaround_time / len(processes)
+        
+        scheduling_output += f"\nAverage Waiting Time: {avg_waiting_time}\n"
+        scheduling_output += f"Average Turnaround Time: {avg_turnaround_time}\n"
+
+        return scheduling_output
