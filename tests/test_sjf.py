@@ -20,8 +20,8 @@ def test_sjf_scheduler():
     
     # Verify the scheduling output
     expected_output = """Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time
-P1\t\t0\t\t5\t\t3\t\t8
 P2\t\t1\t\t3\t\t0\t\t3
+P1\t\t0\t\t5\t\t3\t\t8
 P3\t\t2\t\t7\t\t6\t\t13
     
 Average Waiting Time: 3.0
