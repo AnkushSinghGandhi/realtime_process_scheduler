@@ -17,11 +17,12 @@ def test_sjf_scheduler():
 
     # Verify the scheduling output
     expected_output = """Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n\
-P1\t\t0\t\t5\t\t0\t\t5\n\
-P2\t\t1\t\t3\t\t4\t\t7\n\
-P3\t\t2\t\t7\t\t10\t\t17\n\
+P1\t\t0\t\t5\t\t3\t\t8\n\
+P2\t\t1\t\t3\t\t0\t\t3\n\
+P3\t\t2\t\t7\t\t6\t\t13\n\
 \n\
-Average Waiting Time: 4.666666666666667\n\
-Average Turnaround Time: 9.666666666666666\n\
+Average Waiting Time: 3.0\n\
+Average Turnaround Time: 8.0\n\
 """
     assert scheduling_output == expected_output
+
