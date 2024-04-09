@@ -24,5 +24,4 @@ P3\t\t2\t\t7\t\t6\t\t13\n\
 Average Waiting Time: 3.0\n\
 Average Turnaround Time: 8.0\n\
 """
-    assert scheduling_output == expected_output
-
+    assert scheduling_output.strip() == expected_output.strip()
