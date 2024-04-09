@@ -1,5 +1,5 @@
 import pytest
-from src.sjf_scheduler import SJFScheduler
+from src.rr_scheduler import RRScheduler
 from src.process import Process
 
 def test_rr_scheduler():
