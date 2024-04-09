@@ -1,4 +1,4 @@
-from src.fcfs import FCFSScheduler
+from src.fcfs_scheduler import FCFSScheduler
 from src.process import Process
 
 def test_fcfs_scheduler_with_empty_input():
