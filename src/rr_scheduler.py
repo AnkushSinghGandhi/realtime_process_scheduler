@@ -22,10 +22,10 @@ class RRScheduler:
                     if remaining_burst_time[i] > self.time_quantum:
                         self.current_time += self.time_quantum
                         remaining_burst_time[i] -= self.time_quantum
-                        waiting_times[i] = max(0, self.current_time - process.arrival_time - process.burst_time)
+                        waiting_times[i] += self.current_time - process.arrival_time  # Update waiting time
                     else:
                         self.current_time += remaining_burst_time[i]
-                        waiting_times[i] = max(0, self.current_time - process.arrival_time - remaining_burst_time[i])
+                        waiting_times[i] += self.current_time - process.arrival_time - remaining_burst_time[i]  # Update waiting time
                         remaining_burst_time[i] = 0
                         process_turnaround_time = self.current_time - process.arrival_time
                         self.total_turnaround_time += process_turnaround_time
