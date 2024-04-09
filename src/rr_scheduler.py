@@ -10,28 +10,30 @@ class RRScheduler:
             return "No processes to schedule"  # Return a message if there are no processes
         
         remaining_burst_time = [process.burst_time for process in processes]  # Using process object attributes
+        waiting_times = [0] * len(processes)
         
         scheduling_output = "Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n"
         
         while True:
             done = True
-            for process in processes:
-                if remaining_burst_time[processes.index(process)] > 0:
+            for i, process in enumerate(processes):
+                if remaining_burst_time[i] > 0:
                     done = False
-                    if remaining_burst_time[processes.index(process)] > self.time_quantum:
+                    if remaining_burst_time[i] > self.time_quantum:
                         self.current_time += self.time_quantum
-                        remaining_burst_time[processes.index(process)] -= self.time_quantum
+                        remaining_burst_time[i] -= self.time_quantum
+                        waiting_times[i] = max(0, self.current_time - process.arrival_time - process.burst_time)
                     else:
-                        self.current_time += remaining_burst_time[processes.index(process)]
-                        process_waiting_time = max(0, self.current_time - process.arrival_time - process.burst_time)
-                        self.total_waiting_time += process_waiting_time
-                        remaining_burst_time[processes.index(process)] = 0
+                        self.current_time += remaining_burst_time[i]
+                        waiting_times[i] = max(0, self.current_time - process.arrival_time - process.burst_time)
+                        remaining_burst_time[i] = 0
                         process_turnaround_time = self.current_time - process.arrival_time
                         self.total_turnaround_time += process_turnaround_time
-                        scheduling_output += f"{process.name}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{process_waiting_time}\t\t{process_turnaround_time}\n"
+                        scheduling_output += f"{process.name}\t\t{process.arrival_time}\t\t{process.burst_time}\t\t{waiting_times[i]}\t\t{process_turnaround_time}\n"
             if done:
                 break
         
+        self.total_waiting_time = sum(waiting_times)
         avg_waiting_time = self.total_waiting_time / len(processes)
         avg_turnaround_time = self.total_turnaround_time / len(processes)
         
