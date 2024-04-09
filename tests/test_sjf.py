@@ -8,23 +8,23 @@ def test_sjf_scheduler():
         Process("P2", arrival_time=1, burst_time=3, priority=2),
         Process("P3", arrival_time=2, burst_time=7, priority=3)
     ]
-    
+
     # Initialize the SJF scheduler
     scheduler = SJFScheduler()
-    
+
     # Schedule the processes
     scheduling_output = scheduler.schedule(processes)
-    
-    # Sort processes by arrival time for consistent comparison
-    processes.sort(key=lambda x: x.arrival_time)
-    
+
+    # Sort processes by burst time for SJF
+    processes.sort(key=lambda x: x.burst_time)
+
     # Verify the scheduling output
-    expected_output = """Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time
-P2\t\t1\t\t3\t\t0\t\t3
-P1\t\t0\t\t5\t\t3\t\t8
-P3\t\t2\t\t7\t\t6\t\t13
-    
-Average Waiting Time: 3.0
-Average Turnaround Time: 8.0
+    expected_output = """Process ID\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n\
+P2\t\t1\t\t3\t\t0\t\t3\n\
+P1\t\t0\t\t5\t\t3\t\t8\n\
+P3\t\t2\t\t7\t\t6\t\t13\n\
+\n\
+Average Waiting Time: 3.0\n\
+Average Turnaround Time: 8.0\n\
 """
     assert scheduling_output.strip() == expected_output.strip()
